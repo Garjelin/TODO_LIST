@@ -20,9 +20,14 @@ class MainActivity : ComponentActivity() {
         Log.d("MainActivity", "onCreate called")
         setContent {
             TODO_LISTTheme {
-                Greeting("Android")
+                TaskListScreen()
             }
         }
+//        setContent {
+//            TODO_LISTTheme {
+//                Greeting("Android")
+//            }
+//        }
     }
     override fun onStart() {
         super.onStart()
@@ -48,6 +53,12 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
         Log.d("MainActivity", "onDestroy called")
     }
+}
+
+@Composable
+fun TaskListScreen() {
+    Text(text = "Welcome to To-Do List!")
+    Log.d("MainActivity", "TaskListScreen. Rendered")
 }
 
 @Composable
