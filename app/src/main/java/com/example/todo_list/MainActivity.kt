@@ -23,11 +23,6 @@ class MainActivity : ComponentActivity() {
                 TaskListScreen()
             }
         }
-//        setContent {
-//            TODO_LISTTheme {
-//                Greeting("Android")
-//            }
-//        }
     }
     override fun onStart() {
         super.onStart()
