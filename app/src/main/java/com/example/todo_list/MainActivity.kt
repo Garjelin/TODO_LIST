@@ -30,10 +30,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("MainActivity", "onCreate called")
-        val tasks = listOf("Task 1", "Task 2", "Task 3")
         setContent {
             TODO_LISTTheme {
-                TaskListScreen(tasks = tasks)
+                TaskListScreen()
             }
         }
     }
@@ -64,17 +63,28 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun TaskListScreen(tasks: List<String>) {
+fun TaskListScreen() {
+    var taskText by remember { mutableStateOf("") }
+    var tasks by remember { mutableStateOf(listOf<String>()) }
+
     Column(modifier = Modifier.padding(16.dp)) {
-        var newTask by remember { mutableStateOf("") }
         TextField(
-            value = newTask,
-            onValueChange = { newTask = it },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text("Enter new task") }
+            value = taskText,
+            onValueChange = {
+                taskText = it
+                Log.d("LOG_MSG", "Text changed: $it")
+                            },
+            label = { Text("Enter new task") },
+            modifier = Modifier.fillMaxWidth()
         )
         Button(
-            onClick = { /* добавить задачу */ },
+            onClick = {
+                if (taskText.isNotEmpty()) {
+                    Log.d("LOG_MSG", "Task added: $taskText")
+                    tasks = tasks + taskText
+                    taskText = ""
+                }
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Add Task")
@@ -84,6 +94,7 @@ fun TaskListScreen(tasks: List<String>) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(tasks) { task ->
+                Log.d("LOG_MSG", "Rendered task: $task")
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -95,7 +106,10 @@ fun TaskListScreen(tasks: List<String>) {
                             .weight(1f)
                             .align(Alignment.CenterVertically)
                     )
-                    Button(onClick = { /* удалить задачу */ }) {
+                    Button(onClick = {
+                        tasks = tasks - task
+                        Log.d("LOG_MSG", "Task deleted: $task")
+                    }) {
                         Text("Delete")
                     }
                 }
