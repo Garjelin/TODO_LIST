@@ -1,6 +1,7 @@
 package com.example.todo_list
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.room.Room
@@ -32,6 +33,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
     fun updateTask(task: Task) {
         viewModelScope.launch(Dispatchers.IO) {
             taskDao.updateTask(task)
+            Log.d("LOG_MSG", "Task updated: ${task.title}")
         }
     }
 }
