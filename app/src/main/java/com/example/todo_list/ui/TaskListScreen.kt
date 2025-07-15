@@ -1,6 +1,5 @@
 package com.example.todo_list.ui
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +23,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.todo_list.util.Logger
 import com.example.todo_list.viewModel.TaskViewModel
 
 @Composable
@@ -37,7 +37,7 @@ fun TaskListScreen(onTaskClick: (Int) -> Unit) {
             value = taskText,
             onValueChange = {
                 taskText = it
-                Log.d("LOG_MSG", "Text changed: $it")
+                Logger.d("Text changed: $it")
             },
             label = { Text("Enter new task") },
             modifier = Modifier.fillMaxWidth()
@@ -45,7 +45,7 @@ fun TaskListScreen(onTaskClick: (Int) -> Unit) {
         Button(
             onClick = {
                 if (taskText.isNotEmpty()) {
-                    Log.d("LOG_MSG", "Task added: $taskText")
+                    Logger.d("Task added: $taskText")
                     viewModel.addTask(taskText)
                     taskText = ""
                 }
@@ -59,7 +59,7 @@ fun TaskListScreen(onTaskClick: (Int) -> Unit) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(tasks) { task ->
-                Log.d("LOG_MSG", "Rendered task: $task")
+                Logger.d("Rendered task: ${task.title}")
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -70,7 +70,7 @@ fun TaskListScreen(onTaskClick: (Int) -> Unit) {
                         checked = task.isCompleted,
                         onCheckedChange = {
                             viewModel.updateTask(task.copy(isCompleted = it))
-                            Log.d("LOG_MSG", "Task updated: ${task.title}, completed: $it")
+                            Logger.d("Task updated: ${task.title}, completed: $it")
                         }
                     )
                     Text(
@@ -81,7 +81,7 @@ fun TaskListScreen(onTaskClick: (Int) -> Unit) {
                     )
                     Button(onClick = {
                         viewModel.deleteTask(task)
-                        Log.d("LOG_MSG", "Task deleted: $task")
+                        Logger.d("Task deleted: ${task.title}")
                     }) {
                         Text("Delete")
                     }
