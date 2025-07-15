@@ -1,4 +1,4 @@
-package com.example.todo_list
+package com.example.todo_list.data.model
 
 import androidx.room.Dao
 import androidx.room.Delete
