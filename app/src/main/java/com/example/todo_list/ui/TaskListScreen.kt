@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Checkbox
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.todo_list.util.Logger
 import com.example.todo_list.viewModel.TaskViewModel
@@ -32,15 +33,27 @@ fun TaskListScreen(onTaskClick: (Int) -> Unit) {
     val tasks by viewModel.tasks.collectAsState(initial = emptyList())
     var taskText by remember { mutableStateOf("") }
 
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .testTag("TaskListScreen")
+    ) {
         TextField(
             value = taskText,
             onValueChange = {
                 taskText = it
                 Logger.d("Text changed: $it")
             },
-            label = { Text("Enter new task") },
-            modifier = Modifier.fillMaxWidth()
+            placeholder = { Text("Enter new task!!!!") },
+            label = {
+                Text(
+                    text = "Enter new task",
+                    modifier = Modifier.testTag("TaskInputLabel")
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("TaskInput")
         )
         Button(
             onClick = {
@@ -50,12 +63,16 @@ fun TaskListScreen(onTaskClick: (Int) -> Unit) {
                     taskText = ""
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("AddTaskButton")
         ) {
             Text("Add Task")
         }
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .testTag("TaskList"),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(tasks) { task ->
@@ -65,24 +82,30 @@ fun TaskListScreen(onTaskClick: (Int) -> Unit) {
                         .fillMaxWidth()
                         .padding(8.dp)
                         .clickable { onTaskClick(task.id) }
+                        .testTag("TaskRow_${task.id}")
                 ) {
                     Checkbox(
                         checked = task.isCompleted,
                         onCheckedChange = {
                             viewModel.updateTask(task.copy(isCompleted = it))
                             Logger.d("Task updated: ${task.title}, completed: $it")
-                        }
+                        },
+                        modifier = Modifier.testTag("TaskCheckbox_${task.id}")
                     )
                     Text(
                         text = task.title,
                         modifier = Modifier
                             .weight(1f)
                             .align(Alignment.CenterVertically)
+                            .testTag("TaskTitle_${task.id}")
                     )
-                    Button(onClick = {
-                        viewModel.deleteTask(task)
-                        Logger.d("Task deleted: ${task.title}")
-                    }) {
+                    Button(
+                        onClick = {
+                            viewModel.deleteTask(task)
+                            Logger.d("Task deleted: ${task.title}")
+                        },
+                        modifier = Modifier.testTag("DeleteTaskButton_${task.id}")
+                    ) {
                         Text("Delete")
                     }
                 }

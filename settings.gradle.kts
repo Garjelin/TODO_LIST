@@ -5,10 +5,12 @@ pluginManagement {
                 includeGroupByRegex("com\\.android.*")
                 includeGroupByRegex("com\\.google.*")
                 includeGroupByRegex("androidx.*")
+                includeGroup("com.android.tools.build")
             }
         }
         mavenCentral()
         gradlePluginPortal()
+        maven { url = uri("https://jitpack.io") }
     }
 }
 dependencyResolutionManagement {

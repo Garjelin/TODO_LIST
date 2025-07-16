@@ -17,6 +17,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.todo_list.util.Logger
 import com.example.todo_list.viewModel.TaskViewModel
@@ -28,7 +29,10 @@ fun TaskDetailScreen(taskId: Int, onBackClick: () -> Unit) {
     val task = tasks.find { it.id == taskId }
 
     if (task == null) {
-        Text(text = "Task not found")
+        Text(
+            text = "Task not found",
+            modifier = Modifier.testTag("TaskNotFound")
+        )
         return
     }
 
@@ -38,10 +42,14 @@ fun TaskDetailScreen(taskId: Int, onBackClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+            .testTag("TaskDetailScreen"),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(text = "Task Details")
+        Text(
+            text = "Task Details",
+            modifier = Modifier.testTag("TaskDetailTitle")
+        )
         TextField(
             value = titleState.value,
             onValueChange = { newValue ->
@@ -49,7 +57,9 @@ fun TaskDetailScreen(taskId: Int, onBackClick: () -> Unit) {
                 Logger.d("Task title changed: $newValue")
             },
             label = { Text("Task title") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("TaskTitleInput")
         )
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -59,19 +69,32 @@ fun TaskDetailScreen(taskId: Int, onBackClick: () -> Unit) {
                 onCheckedChange = { newValue ->
                     isCompletedState.value = newValue
                     Logger.d("Task completed changed: $newValue")
-                }
+                },
+                modifier = Modifier.testTag("TaskCompletedCheckbox")
             )
-            Text(text = "Completed")
+            Text(
+                text = "Completed",
+                modifier = Modifier.testTag("TaskCompletedLabel")
+            )
         }
         Button(
             onClick = {
-                viewModel.updateTask(task.copy(title = titleState.value, isCompleted = isCompletedState.value))
+                viewModel.updateTask(
+                    task.copy(
+                        title = titleState.value,
+                        isCompleted = isCompletedState.value
+                    )
+                )
                 Logger.d("Task saved: $titleState.value")
-            }
+            },
+            modifier = Modifier.testTag("SaveTaskButton")
         ) {
             Text("Save")
         }
-        Button(onClick = onBackClick) {
+        Button(
+            onClick = onBackClick,
+            modifier = Modifier.testTag("BackButton")
+        ) {
             Text("Back")
         }
         Logger.d("Showing task: ${task.title}")
