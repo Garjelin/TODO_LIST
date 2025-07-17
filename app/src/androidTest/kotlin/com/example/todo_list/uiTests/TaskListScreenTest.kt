@@ -6,15 +6,10 @@ import androidx.compose.ui.test.printToLog
 import com.example.todo_list.MainActivity
 import com.example.todo_list.helpers.ComposeTestHolder
 import com.example.todo_list.helpers.assertLabelText
-import com.example.todo_list.ui.TaskDetailScreen
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.github.kakaocup.compose.node.element.KNode
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -68,13 +63,14 @@ class TaskListScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.simple(
     @Test
     fun testTaskListScreenUI() = run {
         step("Check TaskListScreen is displayed") {
+            composeTestRule.onRoot().printToLog("DEBUG")
             taskListScreen {
                 taskInput { assertIsDisplayed() }
                 addTaskButton { assertIsDisplayed() }
                 addTaskButton { assertIsEnabled() }
                 taskInputLabel {
                     flakySafely(10_000) {
-                        assertLabelText("Enter new task")
+                        assertLabelText("Enter new taskq")
                     }
                 }
             }
