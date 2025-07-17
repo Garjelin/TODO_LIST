@@ -44,7 +44,6 @@ fun TaskListScreen(onTaskClick: (Int) -> Unit) {
                 taskText = it
                 Logger.d("Text changed: $it")
             },
-            placeholder = { Text("Enter new task!!!!") },
             label = {
                 Text(
                     text = "Enter new task",

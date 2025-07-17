@@ -59,7 +59,7 @@ fun TaskDetailScreen(taskId: Int, onBackClick: () -> Unit) {
             label = { Text("Task title") },
             modifier = Modifier
                 .fillMaxWidth()
-                .testTag("TaskTitleInput")
+                .testTag("TaskTitleInput_${task.id}")
         )
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -97,6 +97,6 @@ fun TaskDetailScreen(taskId: Int, onBackClick: () -> Unit) {
         ) {
             Text("Back")
         }
-        Logger.d("Showing task: ${task.title}")
+        Logger.d("Showing task: ${task.title} with ID: ${task.id}")
     }
 }
