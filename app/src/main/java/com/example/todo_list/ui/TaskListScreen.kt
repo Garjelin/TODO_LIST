@@ -66,7 +66,8 @@ fun TaskListScreen(onTaskClick: (Int) -> Unit) {
                 .fillMaxWidth()
                 .testTag("AddTaskButton")
         ) {
-            Text("Add Task")
+//            Text("Add Task")
+            Text("Enter new task")
         }
         LazyColumn(
             modifier = Modifier

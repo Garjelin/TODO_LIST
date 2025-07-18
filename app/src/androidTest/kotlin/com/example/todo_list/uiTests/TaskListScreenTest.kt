@@ -4,13 +4,11 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.printToLog
 import com.example.todo_list.MainActivity
-import com.example.todo_list.helpers.ComposeTestHolder
 import com.example.todo_list.helpers.assertLabelText
 import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.github.kakaocup.compose.node.element.KNode
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -18,12 +16,6 @@ class TaskListScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.simple(
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
-
-    @Before
-    fun setup() {
-        ComposeTestHolder.composeTestRule = composeTestRule
-    }
-
 
     // Inner-класс для экрана
     inner class TaskListScreen : ComposeScreen<TaskListScreen>(composeTestRule) {
@@ -65,14 +57,12 @@ class TaskListScreenTest : TestCase(kaspressoBuilder = Kaspresso.Builder.simple(
         step("Check TaskListScreen is displayed") {
             composeTestRule.onRoot().printToLog("DEBUG")
             taskListScreen {
-                taskInput { assertIsDisplayed() }
+                taskInput {
+                    assertIsDisplayed()
+                    assertLabelText("Enter new task")
+                }
                 addTaskButton { assertIsDisplayed() }
                 addTaskButton { assertIsEnabled() }
-                taskInputLabel {
-                    flakySafely(10_000) {
-                        assertLabelText("Enter new taskq")
-                    }
-                }
             }
         }
     }

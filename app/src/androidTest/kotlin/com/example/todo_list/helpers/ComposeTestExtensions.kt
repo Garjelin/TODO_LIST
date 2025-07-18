@@ -3,17 +3,15 @@ package com.example.todo_list.helpers
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
-import androidx.compose.ui.test.junit4.ComposeTestRule
-import androidx.compose.ui.test.onNodeWithText
 import io.github.kakaocup.compose.node.element.KNode
-import org.junit.Assert.assertEquals
-
-object ComposeTestHolder {
-    lateinit var composeTestRule: ComposeTestRule
-}
 
 fun KNode.assertLabelText(expectedText: String) {
-    val semanticsNode = ComposeTestHolder.composeTestRule.onNodeWithText(expectedText).fetchSemanticsNode()
-    val textList = semanticsNode.config.getOrNull(SemanticsProperties.Text)
-    assertEquals(expectedText, textList!![0].text)
+    assert(SemanticsMatcher("Text or Label contains '$expectedText'") { node ->
+        val textList = node.config.getOrNull(SemanticsProperties.Text)
+        val editableText = node.config.getOrNull(SemanticsProperties.EditableText)
+        val contentDescription = node.config.getOrNull(SemanticsProperties.ContentDescription)
+        textList?.any { it.text == expectedText } == true ||
+                editableText?.text == expectedText ||
+                contentDescription?.any { it == expectedText } == true
+    })
 }
