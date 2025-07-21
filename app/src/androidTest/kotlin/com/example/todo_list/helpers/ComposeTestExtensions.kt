@@ -5,13 +5,23 @@ import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import io.github.kakaocup.compose.node.element.KNode
 
-fun KNode.assertLabelText(expectedText: String) {
+fun KNode.assertText(expectedText: String) {
     assert(SemanticsMatcher("Text or Label contains '$expectedText'") { node ->
-        val textList = node.config.getOrNull(SemanticsProperties.Text)
-        val editableText = node.config.getOrNull(SemanticsProperties.EditableText)
+        val text = node.config.getOrNull(SemanticsProperties.Text)
+        text?.any { it.text == expectedText } == true
+    })
+}
+
+fun KNode.assertContentDescription(expectedText: String) {
+    assert(SemanticsMatcher("Text or Label contains '$expectedText'") { node ->
         val contentDescription = node.config.getOrNull(SemanticsProperties.ContentDescription)
-        textList?.any { it.text == expectedText } == true ||
-                editableText?.text == expectedText ||
-                contentDescription?.any { it == expectedText } == true
+        contentDescription?.any { it == expectedText } == true
+    })
+}
+
+fun KNode.assertEditableText(expectedText: String) {
+    assert(SemanticsMatcher("Text or Label contains '$expectedText'") { node ->
+        val editableText = node.config.getOrNull(SemanticsProperties.EditableText)
+        editableText?.text == expectedText
     })
 }

@@ -10,6 +10,7 @@ import com.example.todo_list.data.repository.TaskRepository
 import com.example.todo_list.util.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class TaskViewModel(application: Application) : AndroidViewModel(application) {
@@ -43,6 +44,18 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.updateTask(task)
             Logger.d("Task updated: ${task.title}")
+        }
+    }
+
+    fun searchTasks(query: String): Flow<List<Task>> {
+        return tasks.map { taskList ->
+            taskList.filter { it.title.contains(query, ignoreCase = true) }
+        }
+    }
+
+    fun getCompletedTasks(): Flow<List<Task>> {
+        return tasks.map { taskList ->
+            taskList.filter { it.isCompleted }
         }
     }
 }
