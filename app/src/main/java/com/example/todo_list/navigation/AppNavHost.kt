@@ -8,6 +8,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.todo_list.ui.TaskDetailScreen
 import com.example.todo_list.ui.TaskListScreen
 import android.util.Log
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -24,6 +26,7 @@ import com.example.todo_list.ui.ArchiveScreen
 import com.example.todo_list.ui.SearchScreen
 import com.example.todo_list.util.Logger
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.navigation.NavDestination.Companion.hierarchy
 
 @Composable
@@ -31,6 +34,7 @@ fun AppNavHost() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
+    val layoutDirection = LocalLayoutDirection.current
     Scaffold(
         bottomBar = {
             NavigationBar(
@@ -65,7 +69,11 @@ fun AppNavHost() {
         NavHost(
             navController = navController,
             startDestination = "task_list",
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(
+                top = innerPadding.calculateTopPadding(),
+                start = innerPadding.calculateStartPadding(layoutDirection),
+                end = innerPadding.calculateEndPadding(layoutDirection)
+            )
         ) {
             composable("task_list") {
                 TaskListScreen(

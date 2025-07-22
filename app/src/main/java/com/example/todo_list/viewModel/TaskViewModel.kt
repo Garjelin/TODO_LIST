@@ -58,4 +58,14 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
             taskList.filter { it.isCompleted }
         }
     }
+
+    fun getFilteredTasks(showCompleted: Boolean): Flow<List<Task>> {
+        return tasks.map { taskList ->
+            if (showCompleted) {
+                taskList
+            } else {
+                taskList.filter { !it.isCompleted }
+            }
+        }
+    }
 }

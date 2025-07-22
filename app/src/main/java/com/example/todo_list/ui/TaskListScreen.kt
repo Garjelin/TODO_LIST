@@ -20,6 +20,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.testTag
@@ -30,8 +32,10 @@ import com.example.todo_list.viewModel.TaskViewModel
 @Composable
 fun TaskListScreen(onTaskClick: (Int) -> Unit) {
     val viewModel: TaskViewModel = viewModel()
-    val tasks by viewModel.tasks.collectAsState(initial = emptyList())
+    var showCompleted by remember { mutableStateOf(true) }
+    val tasks by viewModel.getFilteredTasks(showCompleted).collectAsState(initial = emptyList())
     var taskText by remember { mutableStateOf("") }
+    var selectedTabIndex by remember { mutableStateOf(0) } // Индекс активного таба (0 - Hide, 1 - Show)
 
     Column(
         modifier = Modifier
@@ -66,8 +70,32 @@ fun TaskListScreen(onTaskClick: (Int) -> Unit) {
                 .fillMaxWidth()
                 .testTag("AddTaskButton")
         ) {
-//            Text("Add Task")
-            Text("Enter new task")
+            Text("Add Task")
+        }
+        TabRow(
+            selectedTabIndex = selectedTabIndex,
+            modifier = Modifier.testTag("FilterTabRow")
+        ) {
+            Tab(
+                selected = selectedTabIndex == 0,
+                onClick = {
+                    selectedTabIndex = 0
+                    showCompleted = true // Показать все
+                    Logger.d("Filter toggled to Show All")
+                },
+                text = { Text("Show All") },
+                modifier = Modifier.testTag("ShowAllTab")
+            )
+            Tab(
+                selected = selectedTabIndex == 1,
+                onClick = {
+                    selectedTabIndex = 1
+                    showCompleted = false // Скрыть выполненные
+                    Logger.d("Filter toggled to Hide completed")
+                },
+                text = { Text("Hide completed") },
+                modifier = Modifier.testTag("HideCompletedTab")
+            )
         }
         LazyColumn(
             modifier = Modifier
