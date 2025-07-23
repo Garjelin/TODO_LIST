@@ -54,9 +54,9 @@ fun AppNavHost() {
                             navController.navigate(item.route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
                                     saveState = true
+                                    inclusive = true
                                 }
                                 launchSingleTop = true
-                                restoreState = true
                             }
                             Logger.d("Navigated to ${item.route}")
                         },

@@ -3,12 +3,22 @@ package com.example.todo_list.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -22,6 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.todo_list.util.Logger
 import com.example.todo_list.viewModel.TaskViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskDetailScreen(taskId: Int, onBackClick: () -> Unit) {
     val viewModel: TaskViewModel = viewModel()
@@ -42,60 +53,71 @@ fun TaskDetailScreen(taskId: Int, onBackClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
             .testTag("TaskDetailScreen"),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(
-            text = "Task Details",
-            modifier = Modifier.testTag("TaskDetailTitle")
-        )
-        TextField(
-            value = titleState.value,
-            onValueChange = { newValue ->
-                titleState.value = newValue
-                Logger.d("Task title changed: $newValue")
+        TopAppBar(
+            title = { Text("Task Details", modifier = Modifier.testTag("TaskDetailHeader")) },
+            navigationIcon = {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        modifier = Modifier.testTag("BackIcon")
+                    )
+                }
             },
-            label = { Text("Task title") },
+            modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars)
+        )
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .testTag("TaskTitleInput_${task.id}")
-        )
-        Row(
-            verticalAlignment = Alignment.CenterVertically
+                .padding(horizontal = 16.dp)
+                .padding(top = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Checkbox(
-                checked = isCompletedState.value,
-                onCheckedChange = { newValue ->
-                    isCompletedState.value = newValue
-                    Logger.d("Task completed changed: $newValue")
+            TextField(
+                value = titleState.value,
+                onValueChange = { newValue ->
+                    titleState.value = newValue
+                    Logger.d("Task title changed: $newValue")
                 },
-                modifier = Modifier.testTag("TaskCompletedCheckbox")
+                label = { Text("Task title") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("TaskTitleInput_${task.id}")
             )
-            Text(
-                text = "Completed",
-                modifier = Modifier.testTag("TaskCompletedLabel")
-            )
-        }
-        Button(
-            onClick = {
-                viewModel.updateTask(
-                    task.copy(
-                        title = titleState.value,
-                        isCompleted = isCompletedState.value
-                    )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = isCompletedState.value,
+                    onCheckedChange = { newValue ->
+                        isCompletedState.value = newValue
+                        Logger.d("Task completed changed: $newValue")
+                    },
+                    modifier = Modifier.testTag("TaskCompletedCheckbox")
                 )
-                Logger.d("Task saved: $titleState.value")
-            },
-            modifier = Modifier.testTag("SaveTaskButton")
-        ) {
-            Text("Save")
-        }
-        Button(
-            onClick = onBackClick,
-            modifier = Modifier.testTag("BackButton")
-        ) {
-            Text("Back")
+                Text(
+                    text = "Completed",
+                    modifier = Modifier.testTag("TaskCompletedLabel")
+                )
+            }
+            Button(
+                onClick = {
+                    viewModel.updateTask(
+                        task.copy(
+                            title = titleState.value,
+                            isCompleted = isCompletedState.value
+                        )
+                    )
+                    Logger.d("Task saved: $titleState.value")
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("SaveTaskButton")
+            ) {
+                Text("Save")
+            }
         }
         Logger.d("Showing task: ${task.title} with ID: ${task.id}")
     }

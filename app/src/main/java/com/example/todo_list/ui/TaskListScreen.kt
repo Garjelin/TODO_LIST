@@ -35,18 +35,11 @@ import kotlinx.coroutines.runBlocking
 @Composable
 fun TaskListScreen(onTaskClick: (Int) -> Unit) {
     val viewModel: TaskViewModel = viewModel()
-    var isLoading by remember { mutableStateOf(true) }
     var showCompleted by remember { mutableStateOf(viewModel.showCompleted) } // Начальное значение из SharedPreferences
     val tasks by viewModel.getFilteredTasks(showCompleted).collectAsState(initial = emptyList())
     var taskText by remember { mutableStateOf("") }
     var selectedTabIndex by remember { mutableStateOf(if (showCompleted) 0 else 1) } // Индекс активного таба (0 - Hide, 1 - Show)
 
-    LaunchedEffect(Unit) {
-        isLoading = false // Сразу завершаем загрузку, так как данные доступны
-        Logger.d("Initial filter state loaded from SharedPreferences: $showCompleted")
-    }
-
-    // Сохранение состояния при изменении
     LaunchedEffect(showCompleted) {
         viewModel.saveFilterState(showCompleted)
         Logger.d("Filter state synchronized: $showCompleted")
