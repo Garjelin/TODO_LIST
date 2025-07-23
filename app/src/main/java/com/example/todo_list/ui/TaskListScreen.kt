@@ -28,14 +28,37 @@ import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.todo_list.util.Logger
 import com.example.todo_list.viewModel.TaskViewModel
+import androidx.compose.runtime.LaunchedEffect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 @Composable
 fun TaskListScreen(onTaskClick: (Int) -> Unit) {
     val viewModel: TaskViewModel = viewModel()
-    var showCompleted by remember { mutableStateOf(true) }
+    val showCompletedFlow by viewModel.showCompletedFlow.collectAsState(initial = true)
+    var showCompleted by remember { mutableStateOf(true) } // Начальное значение до загрузки
+    var isLoading by remember { mutableStateOf(true) }
     val tasks by viewModel.getFilteredTasks(showCompleted).collectAsState(initial = emptyList())
     var taskText by remember { mutableStateOf("") }
     var selectedTabIndex by remember { mutableStateOf(0) } // Индекс активного таба (0 - Hide, 1 - Show)
+
+    LaunchedEffect(Unit) {
+        runBlocking {
+            val initialState = viewModel.showCompletedFlow.first() // Блокируем UI до загрузки
+            showCompleted = initialState
+            selectedTabIndex = if (showCompleted) 0 else 1
+            isLoading = false
+            Logger.d("Initial filter state loaded from DataStore: $showCompleted")
+        }
+    }
+
+    LaunchedEffect(showCompletedFlow) {
+        if (showCompleted != showCompletedFlow) {
+            showCompleted = showCompletedFlow
+            selectedTabIndex = if (showCompleted) 0 else 1
+            Logger.d("Updated filter state from DataStore: $showCompleted")
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -81,6 +104,7 @@ fun TaskListScreen(onTaskClick: (Int) -> Unit) {
                 onClick = {
                     selectedTabIndex = 0
                     showCompleted = true // Показать все
+                    viewModel.saveFilterState(showCompleted)
                     Logger.d("Filter toggled to Show All")
                 },
                 text = { Text("Show All") },
@@ -91,6 +115,7 @@ fun TaskListScreen(onTaskClick: (Int) -> Unit) {
                 onClick = {
                     selectedTabIndex = 1
                     showCompleted = false // Скрыть выполненные
+                    viewModel.saveFilterState(showCompleted)
                     Logger.d("Filter toggled to Hide completed")
                 },
                 text = { Text("Hide completed") },
