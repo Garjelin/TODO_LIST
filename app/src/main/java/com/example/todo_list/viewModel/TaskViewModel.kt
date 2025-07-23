@@ -2,6 +2,7 @@ package com.example.todo_list.viewModel
 
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
@@ -21,13 +22,10 @@ val Context.dataStore by preferencesDataStore(name = "task_filter_prefs")
 
 class TaskViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: TaskRepository
-    private val dataStore = application.dataStore
+    private val sharedPreferences: SharedPreferences =
+        application.getSharedPreferences("task_filter_prefs", Context.MODE_PRIVATE)
     val tasks: Flow<List<Task>>
-    private val showCompletedKey = booleanPreferencesKey("show_completed")
-    val showCompletedFlow: Flow<Boolean> = dataStore.data
-        .map { preferences ->
-            preferences[showCompletedKey] ?: true // Значение по умолчанию - true (Show All)
-        }
+
     init {
         val taskDao = Room.databaseBuilder(
             application,
@@ -36,6 +34,16 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         ).build().taskDao()
         repository = TaskRepository(taskDao)
         tasks = repository.tasks
+    }
+
+    val showCompleted: Boolean
+        get() = sharedPreferences.getBoolean("show_completed", true)
+
+    fun saveFilterState(showCompleted: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            sharedPreferences.edit().putBoolean("show_completed", showCompleted).apply()
+            Logger.d("Saved filter state to SharedPreferences: $showCompleted")
+        }
     }
 
     fun addTask(title: String) {
@@ -77,15 +85,6 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
                 taskList
             } else {
                 taskList.filter { !it.isCompleted }
-            }
-        }
-    }
-
-    fun saveFilterState(showCompleted: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
-            dataStore.edit { preferences ->
-                preferences[showCompletedKey] = showCompleted
-                Logger.d("Saved filter state: $showCompleted")
             }
         }
     }
