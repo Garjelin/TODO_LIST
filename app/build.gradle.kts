@@ -66,4 +66,5 @@ dependencies {
     androidTestImplementation("com.kaspersky.android-components:kaspresso-compose-support:1.6.0")
     androidTestImplementation("io.github.kakaocup:compose:1.0.0")
     implementation("androidx.datastore:datastore-preferences:1.1.7")
+    implementation ("androidx.compose.material:material:1.9.0-beta03")
 }

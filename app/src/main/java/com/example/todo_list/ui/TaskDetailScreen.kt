@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
@@ -16,9 +18,10 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -27,12 +30,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.todo_list.util.Logger
 import com.example.todo_list.viewModel.TaskViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskDetailScreen(taskId: Int, onBackClick: () -> Unit) {
     val viewModel: TaskViewModel = viewModel()
@@ -55,9 +58,18 @@ fun TaskDetailScreen(taskId: Int, onBackClick: () -> Unit) {
             .fillMaxWidth()
             .testTag("TaskDetailScreen"),
     ) {
-        TopAppBar(
-            title = { Text("Task Details", modifier = Modifier.testTag("TaskDetailHeader")) },
-            navigationIcon = {
+        Surface(
+            color = Color.Transparent,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp, vertical = 0.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 IconButton(onClick = onBackClick) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -65,9 +77,15 @@ fun TaskDetailScreen(taskId: Int, onBackClick: () -> Unit) {
                         modifier = Modifier.testTag("BackIcon")
                     )
                 }
-            },
-            modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars)
-        )
+                Text(
+                    text = "Task Details",
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier
+                        .weight(1f)
+                        .testTag("TaskDetailHeader")
+                )
+            }
+        }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -111,6 +129,7 @@ fun TaskDetailScreen(taskId: Int, onBackClick: () -> Unit) {
                         )
                     )
                     Logger.d("Task saved: $titleState.value")
+                    onBackClick()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
